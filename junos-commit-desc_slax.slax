@@ -1,0 +1,20 @@
+version 1.0;
+ns junos = "http://xml.juniper.net/junos/*/junos";
+ns xnm = "http://xml.juniper.net/xnm/1.1/xnm";
+ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0";
+
+import "../import/junos.xsl";
+
+match configuration {
+    for-each (interfaces/interface[name=*]) {
+        var $description = ./description;
+        var $if-name = ./name;
+        if (jcs:empty ($description)) {
+             <xnm:error> {
+             <message> {
+               expr "The interface " _ $if-name _ " is not described";
+                }
+            }
+        }
+    }
+}
